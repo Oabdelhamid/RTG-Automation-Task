@@ -1,9 +1,9 @@
-package POM;
+package pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public class CartPage extends PageObjectModel{
+public class CartPage extends PageObjectModel {
     public CartPage(WebDriver driver) {
         super(driver);
     }
@@ -20,3 +20,4 @@ public class CartPage extends PageObjectModel{
         return this;
     }
 }
+

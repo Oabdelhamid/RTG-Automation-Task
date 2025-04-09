@@ -1,4 +1,4 @@
-package POM;
+package pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
