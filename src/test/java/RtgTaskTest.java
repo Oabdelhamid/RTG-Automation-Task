@@ -4,6 +4,7 @@ import pages.*;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import pojoClasses.Address;
 import pojoClasses.UserDetails;
 
 import static io.restassured.RestAssured.given;
@@ -54,30 +55,19 @@ public class RtgTaskTest extends TestCase {
     @Test(dependsOnMethods = {"NavigateToLoginPage", "addProductsFromProductPage", "addProductFromProductDetailsPage", "VerifyThatProductsAddedToCart",  "MovedToCardPage"})
     public void AddDetailsToCheckOutPage() {
 
-       // this is simple things
-        // API call to get mock data
-//        Response response = RestAssured.get("https://jsonplaceholder.typicode.com/users/1");
-//        String firstName = response.jsonPath().getString("name").split(" ")[0];
-//        String lastName = response.jsonPath().getString("name").split(" ")[1];
-//        String postalCode = response.jsonPath().getString("address.zipcode");
-//
-//        // Use fetched data in the test
-//        new CheckOutStep1(driver).EnterFirstName(firstName)
-//                .EnterLastName(lastName)
-//                .EnterPostalCode(postalCode)
-//                .ClickContinue();
-
-        // get data with pojo class
-
         Response response = RestAssured.get("https://jsonplaceholder.typicode.com/users/1");
         UserDetails user = response.as(UserDetails.class);
+
 
         String[] nameParts = user.getName().split(" ");
         String firstName = nameParts[0];
         String lastName = nameParts[1];
         String zipcode = user.getAddress().getZipcode();
 
-// Use the extracted data
+
+
+
+
         new CheckOutStep1(driver).EnterFirstName(firstName)
                 .EnterLastName(lastName)
                 .EnterPostalCode(zipcode)

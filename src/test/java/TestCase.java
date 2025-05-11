@@ -12,7 +12,8 @@ public class TestCase {
     public void setup() {
         ChromeOptions options = new ChromeOptions()
                 .addArguments("--start-maximized")
-                .addArguments("--incognito");
+                .addArguments("--incognito")
+                .addArguments("--disable-popup-blocking");
 
         options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
         driver = new ChromeDriver(options);
