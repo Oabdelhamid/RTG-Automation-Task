@@ -29,13 +29,14 @@ jobs:
           choco install firefox -y
           choco install microsoft-edge -y
 
-      - name: 🔹 Setup WebDriverManager
+      - name: 🔹 Create TestNG Directory and Copy File
         run: |
-          echo "Setting up WebDriverManager..."
-          # We'll use WebDriverManager from bonigarcia instead of manually installing drivers
+          mkdir -p src/test/resources
+          copy testing.xml src/test/resources/
+          dir src/test/resources
 
       - name: 🔹 Run Selenium Tests
-        run: mvn clean test -DsuiteXmlFile=testing.xml
+        run: mvn clean test
         env:
           SELENIUM_HEADLESS: true
           SELENIUM_REMOTE_DEBUGGING: false
