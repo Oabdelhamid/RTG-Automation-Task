@@ -1,41 +1,44 @@
-name: Selenium Tests on Windows
+name: Selenium Test Automation
 
 on:
   push:
     branches:
       - main
   pull_request:
+    branches:
+      - main
 
 jobs:
   test:
     runs-on: windows-latest
 
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
+      - name: 📂 Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: 🔧 Set Up JDK 21
+      - name: 🛠️ Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '21'
           cache: 'maven'
 
-      - name: 🖥 Install Chrome, Firefox, and Edge via Chocolatey
+      - name: 🌐 Install Browsers & WebDrivers
         run: |
           choco install googlechrome -y
           choco install firefox -y
-          choco install microsoft-edge -y
+          choco install selenium-edge-driver -y
+          choco install selenium-gecko-driver -y
+          choco install chromedriver -y
 
-      - name: 🔥 Install ChromeDriver
-        run: choco install chromedriver -y
-
-      - name: 🔥 Install GeckoDriver
-        run: choco install selenium-gecko-driver -y
-      
-
-      - name: 🌐 Install EdgeDriver
-        run: choco install selenium-edge-driver -y
-
-      - name: 🚀 Run Selenium Tests
+      - name: 📝 Run Selenium Tests & Generate Allure Results
         run: mvn clean test
+
+      - name: 📂 Generate Allure Report
+        run: allure generate "C:\Users\omara\OneDrive\Documents\GitHub\RTG-Automation-Task\allure-results" -o "C:\Users\omara\OneDrive\Documents\GitHub\RTG-Automation-Task\allure-report"
+
+      - name: 🚀 Upload Allure Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-report
+          path: C:\Users\omara\OneDrive\Documents\GitHub\RTG-Automation-Task\allure-report
