@@ -29,7 +29,6 @@ jobs:
           choco install selenium-edge-driver -y
           choco install selenium-gecko-driver -y
           choco install chromedriver -y
-          choco install allure -y
 
       - name: 📝 Run Selenium Tests & Generate Allure Results
         run: mvn clean test
