@@ -24,22 +24,29 @@ jobs:
           choco install googlechrome
           choco install firefox
 
-      - name: Install WebDrivers
+      - name: Download & Install WebDrivers Manually
         run: |
-          choco install chromedriver
-          choco install geckodriver
+          # Download ChromeDriver
+          curl -LO https://chromedriver.storage.googleapis.com/136.0.xxxx/chromedriver_win32.zip
+          unzip chromedriver_win32.zip
+          mv chromedriver.exe /usr/local/bin/
+
+          # Download GeckoDriver (Firefox)
+          curl -LO https://github.com/mozilla/geckodriver/releases/latest/download/geckodriver-v0.x.x-win64.zip
+          unzip geckodriver-v0.x.x-win64.zip
+          mv geckodriver.exe /usr/local/bin/
 
       - name: Install Edge WebDriver Manually
         run: |
-          curl -LO https://msedgedriver.azureedge.net/136.0.xxxx.x/msedgedriver_win64.zip  # Replace with correct version
+          curl -LO https://msedgedriver.azureedge.net/136.0.xxxx/msedgedriver_win64.zip
           unzip msedgedriver_win64.zip
-          mv msedgedriver.exe /usr/local/bin/msedgedriver
+          mv msedgedriver.exe /usr/local/bin/
 
       - name: Run Selenium Tests (Headless Mode)
         run: mvn clean test -Dheadless=true
 
       - name: Upload Test Reports
-        if: always()
+        if: always()  # ✅ Always save reports, even if tests fail
         uses: actions/upload-artifact@v4
         with:
           name: test-results
