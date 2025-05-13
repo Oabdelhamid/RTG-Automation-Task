@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: 🔹 Checkout Code
@@ -22,24 +22,20 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: 🔹 Install Dependencies
+      - name: 🔹 Install WebDrivers & Browsers
         run: |
-          sudo apt-get update
-          sudo apt-get install -y firefox
-
-      - name: 🔹 Install Google Chrome from Official Repo
-        run: |
-          wget -q -O chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo dpkg -i chrome.deb || sudo apt-get -f install -y
-
-      - name: 🔹 Install WebDrivers
-        run: |
-          wget -q -O /usr/local/bin/chromedriver https://chromedriver.storage.googleapis.com/136.0.7103.92/chromedriver_linux64.zip
-          wget -q -O /usr/local/bin/geckodriver https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-linux64.tar.gz
-          chmod +x /usr/local/bin/chromedriver /usr/local/bin/geckodriver
+          choco install googlechrome -y
+          choco install microsoft-edge -y
+          choco install firefox -y
+          choco install selenium-chrome-driver -y
+          choco install selenium-gecko-driver -y
+          choco install selenium-edge-driver -y
 
       - name: 🔹 Ensure WebDriver Paths
-        run: echo "/usr/local/bin" >> $GITHUB_PATH
+        run: |
+          echo "C:\ProgramData\chocolatey\lib\selenium-chrome-driver\tools" >> $env:GITHUB_PATH
+          echo "C:\ProgramData\chocolatey\lib\selenium-gecko-driver\tools" >> $env:GITHUB_PATH
+          echo "C:\ProgramData\chocolatey\lib\selenium-edge-driver\tools" >> $env:GITHUB_PATH
 
       - name: 🔹 Run Selenium Tests
         run: mvn clean test
