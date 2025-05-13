@@ -1,4 +1,4 @@
-name: Selenium Tests
+name: Selenium Tests on Windows
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: Windows-latest
+    runs-on: windows-latest
 
     steps:
       - name: 📥 Checkout Repository
@@ -21,35 +21,34 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      - name: 🖥 Install Chrome & ChromeDriver
+      - name: 🖥 Install Chrome, Firefox, and Edge via Chocolatey
         run: |
-          sudo apt update
-          sudo apt install -y google-chrome-stable
-          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
-          wget -N "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/
-          rm chromedriver_linux64.zip
+          choco install googlechrome -y
+          choco install firefox -y
+          choco install microsoft-edge -y
 
-      - name: 🔥 Install Firefox & GeckoDriver
+      - name: 🔥 Install ChromeDriver
         run: |
-          sudo apt update
-          sudo apt install -y firefox
-          GECKODRIVER_VERSION=$(curl -s "https://api.github.com/repos/mozilla/geckodriver/releases/latest" | jq -r '.tag_name')
-          wget -N "https://github.com/mozilla/geckodriver/releases/download/${GECKODRIVER_VERSION}/geckodriver-linux64.tar.gz"
-          tar -xvzf geckodriver-linux64.tar.gz
-          sudo mv geckodriver /usr/local/bin/
-          rm geckodriver-linux64.tar.gz
+          $ChromeDriverVersion = (Invoke-WebRequest -Uri "https://chromedriver.storage.googleapis.com/LATEST_RELEASE").Content.Trim()
+          Invoke-WebRequest -Uri "https://chromedriver.storage.googleapis.com/$ChromeDriverVersion/chromedriver_win32.zip" -OutFile chromedriver.zip
+          Expand-Archive -Path chromedriver.zip -DestinationPath .
+          Move-Item -Path chromedriver.exe -Destination "C:\Program Files\Google\Chrome\Application"
+          [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Google\Chrome\Application", [System.EnvironmentVariableTarget]::Machine)
 
-      - name: 🌐 Install Edge & EdgeDriver
+      - name: 🔥 Install GeckoDriver
         run: |
-          sudo apt update
-          sudo apt install -y microsoft-edge-stable
-          EDGE_VERSION=$(curl -s "https://msedgewebdriverstorage.blob.core.windows.net/builds/LATEST_STABLE")
-          wget -N "https://msedgewebdriverstorage.blob.core.windows.net/builds/${EDGE_VERSION}/edgedriver_linux64.zip"
-          unzip edgedriver_linux64.zip
-          sudo mv msedgedriver /usr/local/bin/
-          rm edgedriver_linux64.zip
+          $GeckoDriverVersion = (Invoke-WebRequest -Uri "https://api.github.com/repos/mozilla/geckodriver/releases/latest" | ConvertFrom-Json).tag_name
+          Invoke-WebRequest -Uri "https://github.com/mozilla/geckodriver/releases/download/$GeckoDriverVersion/geckodriver-v$GeckoDriverVersion-win64.zip" -OutFile geckodriver.zip
+          Expand-Archive -Path geckodriver.zip -DestinationPath .
+          Move-Item -Path geckodriver.exe -Destination "C:\Program Files\Mozilla Firefox"
+          [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Mozilla Firefox", [System.EnvironmentVariableTarget]::Machine)
+
+      - name: 🔥 Install EdgeDriver
+        run: |
+          Invoke-WebRequest -Uri "https://msedgedriver.azureedge.net/LATEST_STABLE/msedgedriver_win64.zip" -OutFile edgedriver.zip
+          Expand-Archive -Path edgedriver.zip -DestinationPath .
+          Move-Item -Path msedgedriver.exe -Destination "C:\Program Files (x86)\Microsoft\Edge\Application"
+          [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files (x86)\Microsoft\Edge\Application", [System.EnvironmentVariableTarget]::Machine)
 
       - name: 🚀 Run Selenium Tests
         run: mvn clean test
