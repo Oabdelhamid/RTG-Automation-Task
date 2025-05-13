@@ -21,9 +21,7 @@ public class TestCase {
     @BeforeClass
     public void setup( String browser) {
    driver = DriverFactory.createDriver(browser);
-   driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(90));
-   driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
-   driver.manage().timeouts().scriptTimeout(Duration.ofSeconds(60));
+
 
     }
 
