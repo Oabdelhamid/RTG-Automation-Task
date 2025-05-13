@@ -21,21 +21,28 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
+          cache: 'maven'
 
-      - name: 🔹 Install WebDrivers & Browsers
+      - name: 🔹 Install Browsers
         run: |
           choco install googlechrome -y
-          choco install microsoft-edge -y
           choco install firefox -y
-          choco install selenium-chrome-driver -y
-          choco install selenium-gecko-driver -y
-          choco install selenium-edge-driver -y
+          choco install microsoft-edge -y
 
-      - name: 🔹 Ensure WebDriver Paths
+      - name: 🔹 Setup WebDriverManager
         run: |
-          echo "C:\ProgramData\chocolatey\lib\selenium-chrome-driver\tools" >> $env:GITHUB_PATH
-          echo "C:\ProgramData\chocolatey\lib\selenium-gecko-driver\tools" >> $env:GITHUB_PATH
-          echo "C:\ProgramData\chocolatey\lib\selenium-edge-driver\tools" >> $env:GITHUB_PATH
+          echo "Setting up WebDriverManager..."
+          # We'll use WebDriverManager from bonigarcia instead of manually installing drivers
 
       - name: 🔹 Run Selenium Tests
-        run: mvn clean test
+        run: mvn clean test -DsuiteXmlFile=testing.xml
+        env:
+          SELENIUM_HEADLESS: true
+          SELENIUM_REMOTE_DEBUGGING: false
+
+      - name: 🔹 Publish Test Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: target/surefire-reports/
