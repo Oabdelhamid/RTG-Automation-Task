@@ -1,13 +1,18 @@
+package Tests;
+
 import io.restassured.RestAssured;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.*;
 
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import pojoClasses.Address;
 import pojoClasses.UserDetails;
 
-import static io.restassured.RestAssured.given;
 
 public class RtgTaskTest extends TestCase {
 
@@ -18,11 +23,14 @@ public class RtgTaskTest extends TestCase {
             .EnterPassword("secret_sauce")
             .ClickLoginButton();
     }
+
     @Test (dependsOnMethods = {"NavigateToLoginPage"})
-    public void addProductsFromProductPage(){
+    public void addProductsFromProductPage()  {
+
         new ProductPage(driver).AddProduct1()
                 .ScrollToProduct2();
     }
+
 
     @Test (dependsOnMethods = {"NavigateToLoginPage", "addProductsFromProductPage"})
     public void addProductFromProductDetailsPage(){
@@ -33,16 +41,20 @@ public class RtgTaskTest extends TestCase {
         new ProductDetailsPage(driver).MovedToCardPage();
     }
 
+
     @Test (dependsOnMethods = {"NavigateToLoginPage", "addProductsFromProductPage", "addProductFromProductDetailsPage"})
         public void VerifyThatProductsAddedToCart(){
         new CartPage(driver).VerifyThatProductDetailsIsDisplayed();
     }
+
 
     @Test (dependsOnMethods = {"NavigateToLoginPage", "addProductsFromProductPage", "addProductFromProductDetailsPage"})
     public void VerifyThatProductDetailsIsDisplayed(){
         boolean ActualProductDetails = new CartPage(driver).VerifyThatProductDetailsIsDisplayed();
         Assert.assertTrue(ActualProductDetails);
     }
+
+
     @Test (dependsOnMethods = {"NavigateToLoginPage", "addProductsFromProductPage", "addProductFromProductDetailsPage", "VerifyThatProductsAddedToCart"})
     public void MovedToCardPage(){
         String ExpectedUrl = "https://www.saucedemo.com/checkout-step-one.html";
@@ -74,12 +86,14 @@ public class RtgTaskTest extends TestCase {
                 .ClickContinue();
     }
 
+
     @Test(dependsOnMethods = {"NavigateToLoginPage", "addProductsFromProductPage", "addProductFromProductDetailsPage", "VerifyThatProductsAddedToCart",  "MovedToCardPage", "AddDetailsToCheckOutPage"})
     public void CheckOrderDetailsIsDisplayed() {
         boolean ActualOrderDetails = new CheckOutStep2(driver).VerifyThatOrderDetailsIsDisplayed();
         Assert.assertTrue(ActualOrderDetails);
         new CheckOutStep2(driver).ClickFinish();
     }
+
 
     @Test(dependsOnMethods = {"NavigateToLoginPage", "addProductsFromProductPage", "addProductFromProductDetailsPage", "VerifyThatProductsAddedToCart",  "MovedToCardPage", "AddDetailsToCheckOutPage"})
     public void VerifyThatFinishPageIsDisplayed() {
