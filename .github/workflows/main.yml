@@ -21,7 +21,7 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      - name: 🖥 Install Chrome, Firefox, and Edge via Chocolatey
+      - name: 🖥 Install Browsers
         run: |
           choco install googlechrome -y
           choco install firefox -y
