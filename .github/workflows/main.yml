@@ -35,13 +35,14 @@ jobs:
           Move-Item -Path chromedriver.exe -Destination "C:\Program Files\Google\Chrome\Application"
           [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Google\Chrome\Application", [System.EnvironmentVariableTarget]::Machine)
 
-      - name: 🔥 Install  GeckoDriver
+      - name: 🔥 Install GeckoDriver
         run: |
-          $GeckoDriverVersion = (Invoke-WebRequest -Uri "https://api.github.com/repos/mozilla/geckodriver/releases/latest" | ConvertFrom-Json).tag_name
-          Invoke-WebRequest -Uri "https://github.com/mozilla/geckodriver/releases/download/$GeckoDriverVersion/geckodriver-v$GeckoDriverVersion-win64.zip" -OutFile geckodriver.zip
+          $GeckoDriverVersion = "v0.36.0"  # Manually set version
+          Invoke-WebRequest -Uri "https://github.com/mozilla/geckodriver/releases/download/$GeckoDriverVersion/geckodriver-$GeckoDriverVersion-win64.zip" -OutFile geckodriver.zip
           Expand-Archive -Path geckodriver.zip -DestinationPath .
           Move-Item -Path geckodriver.exe -Destination "C:\Program Files\Mozilla Firefox"
-          [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Mozilla Firefox", [System.EnvironmentVariableTarget]::Machine)
+          [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Mozilla Firefox", [System.EnvironmentVariableTarget]::Machine)
+      
 
       - name: 🔥 Install EdgeDriver
         run: |
