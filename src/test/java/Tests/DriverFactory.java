@@ -27,16 +27,16 @@ public class DriverFactory {
 
     private static ChromeOptions getChromeOptions() {
         return new ChromeOptions()
-                .addArguments("--incognito", "--disable-popup-blocking", "--start-maximized", "--headless" ,"--remote-debugging-port=9222");
+                .addArguments("--incognito", "--disable-popup-blocking", "--start-maximized", "--headless" );
     }
 
     private static FirefoxOptions getFirefoxOptions() {
         return new FirefoxOptions()
-                .addArguments("-private", "--disable-popup-blocking", "--start-maximized", "--headless" , "--remote-debugging-port=9222");
+                .addArguments("-private", "--disable-popup-blocking", "--start-maximized", "--headless" );
     }
 
     private static EdgeOptions getEdgeOptions() {
         return new EdgeOptions()
-                .addArguments("--inprivate", "--disable-popup-blocking", "--start-maximized", "--headless" , "--remote-debugging-port=9222");
+                .addArguments("--inprivate", "--disable-popup-blocking", "--start-maximized", "--headless" );
     }
 }
