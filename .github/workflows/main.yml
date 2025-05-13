@@ -35,7 +35,7 @@ jobs:
           Move-Item -Path chromedriver.exe -Destination "C:\Program Files\Google\Chrome\Application"
           [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Google\Chrome\Application", [System.EnvironmentVariableTarget]::Machine)
 
-      - name: 🔥 Install GeckoDriver
+      - name: 🔥 Install fixed GeckoDriver
         run: |
           $GeckoDriverVersion = (Invoke-WebRequest -Uri "https://api.github.com/repos/mozilla/geckodriver/releases/latest" | ConvertFrom-Json).tag_name
           Invoke-WebRequest -Uri "https://github.com/mozilla/geckodriver/releases/download/$GeckoDriverVersion/geckodriver-v$GeckoDriverVersion-win64.zip" -OutFile geckodriver.zip
