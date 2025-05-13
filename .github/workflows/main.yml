@@ -43,4 +43,4 @@ jobs:
           msedgedriver --version
 
       - name: 🚀 Run Selenium Tests
-        run: mvn clean test
+        run: mvn clean test -X
