@@ -25,7 +25,15 @@ jobs:
       - name: 🔹 Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y google-chrome firefox
+          sudo apt-get install -y firefox
+
+      - name: 🔹 Install Google Chrome from Official Repo
+        run: |
+          wget -q -O chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo dpkg -i chrome.deb || sudo apt-get -f install -y
+
+      - name: 🔹 Install WebDrivers
+        run: |
           wget -q -O /usr/local/bin/chromedriver https://chromedriver.storage.googleapis.com/136.0.7103.92/chromedriver_linux64.zip
           wget -q -O /usr/local/bin/geckodriver https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-linux64.tar.gz
           chmod +x /usr/local/bin/chromedriver /usr/local/bin/geckodriver
