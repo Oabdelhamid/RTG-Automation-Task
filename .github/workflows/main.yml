@@ -1,4 +1,4 @@
-name: Selenium Tests on Windows
+name: Selenium Tests on Ubuntu
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: 📥 Checkout Repository
@@ -21,20 +21,23 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      - name: 🖥 Install Browsers
+      - name: 🧪 Install Chrome & ChromeDriver
         run: |
-          choco install googlechrome -y
-          choco install firefox -y
-          choco install microsoft-edge -y
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          wget -N https://chromedriver.storage.googleapis.com/$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          chromedriver --version
 
-      - name: 🔥 Install ChromeDriver
-        run: choco install chromedriver -y
-
-      - name: 🔥 Install GeckoDriver
-        run: choco install selenium-gecko-driver -y
-
-      - name: 🌐 Install EdgeDriver
-        run: choco install selenium-edge-driver -y
+      - name: 🔥 Install Firefox & GeckoDriver
+        run: |
+          sudo apt-get install -y firefox
+          GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+          wget https://github.com/mozilla/geckodriver/releases/download/$GECKO_VERSION/geckodriver-$GECKO_VERSION-linux64.tar.gz
+          tar -xvzf geckodriver-*-linux64.tar.gz
+          sudo mv geckodriver /usr/local/bin/
+          geckodriver --version
 
       - name: 🚀 Run Selenium Tests
         run: mvn clean test
