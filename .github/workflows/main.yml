@@ -1,53 +1,55 @@
-name: Run Selenium Tests
+name: Selenium Tests
 
 on:
   push:
-    branches: [main]  # ✅ Runs tests on push to 'main'
+    branches:
+      - main
+  pull_request:
 
 jobs:
   test:
-    runs-on: windows-latest  # ✅ Windows environment for execution
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Set Up Java
+      - name: 🔧 Set Up JDK 21
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '21'
           cache: 'maven'
 
-      - name: Install Chrome & Firefox
+      - name: 🖥 Install Chrome & ChromeDriver
         run: |
-          choco install googlechrome
-          choco install firefox
+          sudo apt update
+          sudo apt install -y google-chrome-stable
+          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
+          wget -N "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          rm chromedriver_linux64.zip
 
-      - name: Download & Install WebDrivers Manually
+      - name: 🔥 Install Firefox & GeckoDriver
         run: |
-          # Download ChromeDriver
-          curl -LO https://chromedriver.storage.googleapis.com/136.0.xxxx/chromedriver_win32.zip
-          unzip chromedriver_win32.zip
-          mv chromedriver.exe /usr/local/bin/
+          sudo apt update
+          sudo apt install -y firefox
+          GECKODRIVER_VERSION=$(curl -s "https://api.github.com/repos/mozilla/geckodriver/releases/latest" | jq -r '.tag_name')
+          wget -N "https://github.com/mozilla/geckodriver/releases/download/${GECKODRIVER_VERSION}/geckodriver-linux64.tar.gz"
+          tar -xvzf geckodriver-linux64.tar.gz
+          sudo mv geckodriver /usr/local/bin/
+          rm geckodriver-linux64.tar.gz
 
-          # Download GeckoDriver (Firefox)
-          curl -LO https://github.com/mozilla/geckodriver/releases/latest/download/geckodriver-v0.x.x-win64.zip
-          unzip geckodriver-v0.x.x-win64.zip
-          mv geckodriver.exe /usr/local/bin/
-
-      - name: Install Edge WebDriver Manually
+      - name: 🌐 Install Edge & EdgeDriver
         run: |
-          curl -LO https://msedgedriver.azureedge.net/136.0.xxxx/msedgedriver_win64.zip
-          unzip msedgedriver_win64.zip
-          mv msedgedriver.exe /usr/local/bin/
+          sudo apt update
+          sudo apt install -y microsoft-edge-stable
+          EDGE_VERSION=$(curl -s "https://msedgewebdriverstorage.blob.core.windows.net/builds/LATEST_STABLE")
+          wget -N "https://msedgewebdriverstorage.blob.core.windows.net/builds/${EDGE_VERSION}/edgedriver_linux64.zip"
+          unzip edgedriver_linux64.zip
+          sudo mv msedgedriver /usr/local/bin/
+          rm edgedriver_linux64.zip
 
-      - name: Run Selenium Tests (Headless Mode)
-        run: mvn clean test -Dheadless=true
-
-      - name: Upload Test Reports
-        if: always()  # ✅ Always save reports, even if tests fail
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: target/surefire-reports/
+      - name: 🚀 Run Selenium Tests
+        run: mvn clean test
