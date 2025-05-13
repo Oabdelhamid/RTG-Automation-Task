@@ -28,28 +28,14 @@ jobs:
           choco install microsoft-edge -y
 
       - name: 🔥 Install ChromeDriver
-        run: |
-          $ChromeDriverVersion = (Invoke-WebRequest -Uri "https://chromedriver.storage.googleapis.com/LATEST_RELEASE").Content.Trim()
-          Invoke-WebRequest -Uri "https://chromedriver.storage.googleapis.com/$ChromeDriverVersion/chromedriver_win32.zip" -OutFile chromedriver.zip
-          Expand-Archive -Path chromedriver.zip -DestinationPath .
-          Move-Item -Path chromedriver.exe -Destination "C:\Program Files\Google\Chrome\Application"
-          [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Google\Chrome\Application", [System.EnvironmentVariableTarget]::Machine)
+        run: choco install chromedriver -y
 
       - name: 🔥 Install GeckoDriver
-        run: |
-          $GeckoDriverVersion = "v0.36.0"  # Manually set version
-          Invoke-WebRequest -Uri "https://github.com/mozilla/geckodriver/releases/download/$GeckoDriverVersion/geckodriver-$GeckoDriverVersion-win64.zip" -OutFile geckodriver.zip
-          Expand-Archive -Path geckodriver.zip -DestinationPath .
-          Move-Item -Path geckodriver.exe -Destination "C:\Program Files\Mozilla Firefox"
-          [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Mozilla Firefox", [System.EnvironmentVariableTarget]::Machine)
+        run: choco install selenium-gecko-driver -y
       
 
-      - name: 🔥 Install EdgeDriver
-        run: |
-          Invoke-WebRequest -Uri "https://msedgedriver.azureedge.net/LATEST_STABLE/msedgedriver_win64.zip" -OutFile edgedriver.zip
-          Expand-Archive -Path edgedriver.zip -DestinationPath .
-          Move-Item -Path msedgedriver.exe -Destination "C:\Program Files (x86)\Microsoft\Edge\Application"
-          [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files (x86)\Microsoft\Edge\Application", [System.EnvironmentVariableTarget]::Machine)
+      - name: 🌐 Install EdgeDriver
+        run: choco install selenium-edge-driver -y
 
       - name: 🚀 Run Selenium Tests
         run: mvn clean test
