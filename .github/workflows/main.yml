@@ -24,33 +24,31 @@ jobs:
       - name: 🧪 Install Chrome & ChromeDriver (version-matched)
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget unzip curl gnupg
-          
-          # Install Chrome
-          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo apt-get install -y curl unzip wget gnupg
+
+          # Install Google Chrome
+          curl -sSL https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
           echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
 
-          # Get Chrome version
-          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+' | head -1)
-          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
-          
-          # Download and set up ChromeDriver
-          wget -N https://chromedriver.storage.googleapis.com/${DRIVER_VERSION}/chromedriver_linux64.zip
+          # Get matching ChromeDriver version
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+' | head -1)
+          DRIVER_VERSION=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
+          wget -N https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip
           unzip chromedriver_linux64.zip
           sudo mv chromedriver /usr/local/bin/
-          sudo chmod +x /usr/local/bin/chromedriver
+          chmod +x /usr/local/bin/chromedriver
           chromedriver --version
 
       - name: 🔥 Install Firefox & GeckoDriver
         run: |
           sudo apt-get install -y firefox
           GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep "tag_name" | cut -d '"' -f 4)
-          wget https://github.com/mozilla/geckodriver/releases/download/${GECKO_VERSION}/geckodriver-${GECKO_VERSION}-linux64.tar.gz
+          wget https://github.com/mozilla/geckodriver/releases/download/$GECKO_VERSION/geckodriver-$GECKO_VERSION-linux64.tar.gz
           tar -xvzf geckodriver-*-linux64.tar.gz
           sudo mv geckodriver /usr/local/bin/
-          sudo chmod +x /usr/local/bin/geckodriver
+          chmod +x /usr/local/bin/geckodriver
           geckodriver --version
 
       - name: 🚀 Run Selenium Tests
