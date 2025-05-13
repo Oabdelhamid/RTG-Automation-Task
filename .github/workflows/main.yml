@@ -40,9 +40,3 @@ jobs:
           SELENIUM_HEADLESS: true
           SELENIUM_REMOTE_DEBUGGING: false
 
-      - name: 🔹 Publish Test Results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-results
-          path: target/surefire-reports/
