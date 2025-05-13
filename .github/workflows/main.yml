@@ -21,16 +21,18 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      - name: 🧪 Install Chrome & ChromeDriver
+      - name: 🧪 Install Chrome & ChromeDriver (version-matched)
         run: |
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
-          wget -N https://chromedriver.storage.googleapis.com/$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+' | cut -d '.' -f 1)
+          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+          wget -N https://chromedriver.storage.googleapis.com/${DRIVER_VERSION}/chromedriver_linux64.zip
           unzip chromedriver_linux64.zip
           sudo mv chromedriver /usr/local/bin/
           chromedriver --version
 
-      - name: 🔥 Install Firefox & GeckoDriver
+      - name: 🔥 Install Firefox & GeckoDriver (version-matched)
         run: |
           sudo apt-get install -y firefox
           GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep "tag_name" | cut -d '"' -f 4)
