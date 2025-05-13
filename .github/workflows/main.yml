@@ -21,35 +21,48 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      - name: 🧪 Install Chrome & ChromeDriver (version-matched)
+      - name: 🧪 Install Chrome & ChromeDriver
         run: |
-          sudo apt-get update
-          sudo apt-get install -y curl unzip wget gnupg
-
-          # Install Google Chrome
-          curl -sSL https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
 
+          # Get the major version of Chrome
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+' | head -1)
+          echo "Installed Chrome major version: $CHROME_VERSION"
+
           # Get matching ChromeDriver version
-          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+' | head -1)
-          DRIVER_VERSION=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
-          wget -N https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip
+          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+          echo "Matching ChromeDriver version: $DRIVER_VERSION"
+
+          wget -N "https://chromedriver.storage.googleapis.com/${DRIVER_VERSION}/chromedriver_linux64.zip"
           unzip chromedriver_linux64.zip
           sudo mv chromedriver /usr/local/bin/
-          chmod +x /usr/local/bin/chromedriver
           chromedriver --version
 
       - name: 🔥 Install Firefox & GeckoDriver
         run: |
           sudo apt-get install -y firefox
           GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+          echo "Matching GeckoDriver version: $GECKO_VERSION"
           wget https://github.com/mozilla/geckodriver/releases/download/$GECKO_VERSION/geckodriver-$GECKO_VERSION-linux64.tar.gz
           tar -xvzf geckodriver-*-linux64.tar.gz
           sudo mv geckodriver /usr/local/bin/
-          chmod +x /usr/local/bin/geckodriver
           geckodriver --version
+
+      - name: 🔥 Install Edge & EdgeDriver
+        run: |
+          sudo apt-get install -y microsoft-edge-stable
+          EDGE_VERSION=$(microsoft-edge --version | grep -oP '\d+' | head -1)
+          echo "Installed Edge major version: $EDGE_VERSION"
+          
+          # Get matching EdgeDriver version
+          EDGE_DRIVER_VERSION=$(curl -s "https://msedgedriver.azureedge.net/LATEST_RELEASE_$EDGE_VERSION")
+          echo "Matching EdgeDriver version: $EDGE_DRIVER_VERSION"
+
+          wget -N "https://msedgedriver.azureedge.net/${EDGE_DRIVER_VERSION}/edgedriver_linux64.zip"
+          unzip edgedriver_linux64.zip
+          sudo mv msedgedriver /usr/local/bin/
+          msedgedriver --version
 
       - name: 🚀 Run Selenium Tests
         run: mvn clean test
