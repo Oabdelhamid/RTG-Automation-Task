@@ -38,7 +38,7 @@ jobs:
         run: allure generate "C:\Users\omara\OneDrive\Documents\GitHub\RTG-Automation-Task\allure-results" -o "C:\Users\omara\OneDrive\Documents\GitHub\RTG-Automation-Task\allure-report"
 
       - name: 🚀 Upload Allure Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: C:\Users\omara\OneDrive\Documents\GitHub\RTG-Automation-Task\allure-report
