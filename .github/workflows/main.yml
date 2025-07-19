@@ -1,11 +1,14 @@
 name: Selenium Tests on Windows
 
 on:
+  # Run on every push to any branch
   push:
     branches:
-      - main
+      - '**'  # This means any branch
+
+  # Also run daily at 13:00 UTC
   schedule:
-    - cron: '0 13 * * *'   # Runs every day at 13:00 UTC
+    - cron: '0 13 * * *'  # Runs every day at 13:00 UTC
 
 jobs:
   test:
@@ -28,14 +31,6 @@ jobs:
           choco install firefox -y
           choco install microsoft-edge -y
 
-      - name: 🔥 Install ChromeDriver
-        run: choco install chromedriver -y
-
-      - name: 🔥 Install GeckoDriver
-        run: choco install selenium-gecko-driver -y
-
-      - name: 🌐 Install EdgeDriver
-        run: choco install selenium-edge-driver -y
 
       - name: 🚀 Run Selenium Tests
         run: mvn clean test

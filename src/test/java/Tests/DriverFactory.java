@@ -15,9 +15,10 @@ public class DriverFactory {
 
     public static WebDriver createDriver(String browser) {
         Map<String, Supplier<WebDriver>> drivers = Map.of(
+
                 "chrome", () -> new ChromeDriver(getChromeOptions()),
-                "firefox", () -> new FirefoxDriver(getFirefoxOptions()),
-                "edge", () -> new EdgeDriver(getEdgeOptions())
+                "firefox", () -> new FirefoxDriver(getFirefoxOptions())
+                //"edge", () -> new EdgeDriver(getEdgeOptions())
         );
 
         return drivers.getOrDefault(browser.toLowerCase(), () -> {
@@ -27,12 +28,14 @@ public class DriverFactory {
 
     private static ChromeOptions getChromeOptions() {
         return new ChromeOptions()
-                .addArguments("--incognito",
+                .addArguments(
+                        "--incognito",
                         "--disable-popup-blocking",
-                        "--headless",
                         "--disable-dev-shm-usage",
                         "--disable-gpu",
-                        "--remote-debugging-port=9222"
+                        "--headless=new"
+
+
                         );
 
 
@@ -43,21 +46,19 @@ public class DriverFactory {
                 .addArguments(
                         "-private",
                         "--disable-popup-blocking",
-                        "--headless",
                         "--disable-dev-shm-usage",
-                        "--disable-gpu"
+                        "--disable-gpu",
+                        "--headless"
                         );
     }
 
-    private static EdgeOptions getEdgeOptions() {
-        return new EdgeOptions()
-                .addArguments(
-                        "--inprivate",
-                        "--disable-popup-blocking",
-                        "--headless",
-                        "--disable-dev-shm-usage",
-                        "--disable-gpu",
-                        "--remote-debugging-port=9222"
-                );
-    }
+//    private static EdgeOptions getEdgeOptions() {
+//        return new EdgeOptions()
+//                .addArguments(
+//                        "--inprivate",
+//                        "--disable-popup-blocking",
+//                        "--disable-dev-shm-usage",
+//                        "--disable-gpu"
+//                );
+//    }
 }
